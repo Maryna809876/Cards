@@ -1,7 +1,6 @@
 import { editCard, getCard } from "./sendRequest.js";
 
 export function showCard(objHtml, TOKEN) {
-    console.log(objHtml);
     const cardBody = objHtml.querySelector('.card_body')
     const cardHideBody = objHtml.querySelector('.card_hide')
 

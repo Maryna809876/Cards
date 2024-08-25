@@ -5,10 +5,10 @@ export function makeDraggable() {
       modifiers: [
         interact.modifiers.restrictRect({
           restriction: 'parent',
-          endOnly: false
+          endOnly: true
         })
       ],
-      autoScroll: true,
+  
       listeners: {
         move: dragMoveListener
       }

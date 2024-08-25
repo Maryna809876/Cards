@@ -63,9 +63,7 @@ export async function getAllCard(token) {
 
     return false
   } else {
-
     const result = await response.json();
-    // console.log(result);
     return result;
   }
 }
@@ -98,3 +96,5 @@ export async function deleteCard(cardId, token) {
   })
   return response.ok
 }
+//  Потрібні окрема функція на кожен  запит на на всі картки , видалення та редагування
+// Щоб я міг вільно використовувати твої функції і отримати масив даних або обєкт ( попередні я не можу скласти архітектуру через module )

@@ -31,18 +31,14 @@ export class ModalVisit extends Modal {
 
     showFields() {
         this.form = this.formModalVisit.querySelector('.form-visit')
-        // console.log(this.form);
         this.fields = this.formModalVisit.querySelector('#fields')
         this.btnClose = this.form.querySelector('.close_btn')
         this.btnClose.addEventListener('click', () => {
             super.closeModal()
         })
-        // console.log(this.fields);
         const itemsUrgency = Object.keys(listArgency)
         this.form.addEventListener('change', (e) => {
-            // console.log(e.target.value);
             const doctor = e.target.value
-            // console.log(doctor, allDoctor[doctor]);
             //    додав контент для коректної модалки + bootstrap
             const commonFields = `
                 <div class="mt-3 text-center fs-5 fw-bold ">Запис до: ${allDoctor[doctor]}a</div>
@@ -71,19 +67,19 @@ export class ModalVisit extends Modal {
                 this.fields.innerHTML = commonFields + `
                 <div class="form-group mt-2">
                     <label for="pressure" class="form-group-label mb-1">Звичайний тиск</label>
-                    <input type="number" class="form-control"  id="pressure" placeholder="Звичайний тиск" name="pressure">
+                    <input type="number" class="form-control form-pressure"  id="pressure" placeholder="Звичайний тиск" name="pressure">
                 </div>
                 <div class="form-group mt-2">
                     <label for="index-body" class="form-group-label mb-1">Індекс маси тіла</label>
-                    <input type="number"  id="index-body" class="form-control" placeholder="Індекс маси тіла" name="index">
+                    <input type="number"  id="index-body" class="form-control form-index" placeholder="Індекс маси тіла" name="index">
                 </div>
                 <div class="form-group mt-2">
                     <label for="illness" class="form-group-label mb-1">Перенесені захворювання серцево-судинної системи</label>
-                    <input type="text"  id="illness" class="form-control" placeholder="Перенесені захворювання серцево-судинної системи" name="illness">
+                    <input type="text"  id="illness" class="form-control form-illness" placeholder="Перенесені захворювання серцево-судинної системи" name="illness">
                 </div>
                 <div class="form-group mt-2">
                     <label for="age" class="form-group-label mb-1">Вік</label>
-                    <input type="number"  id='age' class="form-control" placeholder="Вік" name="age">
+                    <input type="number"  id='age' class="form-control form-age" placeholder="Вік" name="age">
                 </div> 
                 `
             }
@@ -99,7 +95,7 @@ export class ModalVisit extends Modal {
                 this.fields.innerHTML = commonFields + `
                     <div class="form-group mt-3">
                         <label for="age" class="form-group-label mb-1">Вік</label>
-                        <input type="number"  id='age' class="form-control input-therapist" placeholder="Вік" name="age">
+                        <input type="number"  id='age' class="form-control input-therapist " placeholder="Вік" name="age">
                     </div> 
                     `
             }

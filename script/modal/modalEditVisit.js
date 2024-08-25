@@ -5,10 +5,9 @@ export class ModalEditCard extends Modal {
     constructor(cardData, title = 'Edit card',) {
         super(title);
         this.cardData = cardData;
-        console.log(this.cardData);
         this.body = `
         <form  name="modal" class='form-edit-visit'>
-        <select id="doctorSelect" class="form-select" aria-label="Default select example" name='doctor'>
+        <select id="doctorSelect" class="form-select form-doctor" aria-label="Default select example" name='doctor'>
             <option selected disabled value="0">Оберіть лікаря</option>
             <option value="${listDoctor[0]}">${allDoctor[listDoctor[0]]}</option>
             <option value="${listDoctor[1]}">${allDoctor[listDoctor[1]]}</option>
@@ -61,7 +60,7 @@ export class ModalEditCard extends Modal {
             <input type="text" placeholder="Короткий опис візиту" class="form-control" name="description" id="description" value="${this.cardData.description || ''}">
         </div>
         <div class="form-group mt-2">
-            <select name="urgency"  class="form-select card_urgency" aria-label="Default select example">
+            <select name="urgency"  class="form-select card_urgency form-urgency" aria-label="Default select example">
                 <option selected disabled value="0">Терміновість</option>
                 <option value="${itemsUrgency[0]}">${listArgency[itemsUrgency[0]]}</option>
                 <option value="${itemsUrgency[1]}">${listArgency[itemsUrgency[1]]}</option>
@@ -70,39 +69,39 @@ export class ModalEditCard extends Modal {
         </div>
         <div class="form-group mt-2">
             <label for="fullname" class="form-group-label mb-1">Прізвище Ім'я</label>
-            <input type="text"  class="form-control" id="fullname" placeholder="Прізвище Ім'я" name="name" value="${this.cardData.name || ''}">
+            <input type="text"  class="form-control form-fullname" id="fullname" placeholder="Прізвище Ім'я" name="name" value="${this.cardData.name}">
         </div>`
 
         if (doctor === "Кардіолог") {
             this.fields.innerHTML = commonFields + `
         <div class="form-group mt-2">
             <label for="pressure" class="form-group-label mb-1">Звичайний тиск</label>
-            <input type="number" class="form-control"  id="pressure" placeholder="Звичайний тиск" name="pressure" value="${this.cardData.pressure || ''}">
+            <input type="number" class="form-control form-pressure"  id="pressure" placeholder="Звичайний тиск" name="pressure" value="${this.cardData.pressure}">
         </div>
         <div class="form-group mt-2">
             <label for="index-body" class="form-group-label mb-1">Індекс маси тіла</label>
-            <input type="number"  id="index-body" class="form-control" placeholder="Індекс маси тіла" name="index" value="${this.cardData.index || ''}">
+            <input type="number"  id="index-body" class="form-control form-index" placeholder="Індекс маси тіла" name="index" value="${this.cardData.index}">
         </div>
         <div class="form-group mt-2">
             <label for="illness" class="form-group-label mb-1">Перенесені захворювання серцево-судинної системи</label>
-            <input type="text"  id="illness" class="form-control" placeholder="Перенесені захворювання серцево-судинної системи" name="illness" value="${this.cardData.illness || ''}">
+            <input type="text"  id="illness" class="form-control form-illness" placeholder="Перенесені захворювання серцево-судинної системи" name="illness" value="${this.cardData.illness}">
         </div>
         <div class="form-group mt-2">
             <label for="age" class="form-group-label mb-1">Вік</label>
-            <input type="number"  id='age' class="form-control" placeholder="Вік" name="age" "${this.cardData.age || ''}">
+            <input type="number"  id='age' class="form-control form-age" placeholder="Вік" name="age" value="${this.cardData.age}">
         </div>`
         } else if (doctor === "Стоматолог") {
             this.fields.innerHTML = commonFields + `
 
             <div class="form-group mt-3">
                 <label for="date-last" class="form-group-label mb-1">Дата останнього відвідування</label>
-                <input type="date" id='date-last' class="form-control" placeholder="Дата останнього відвідування" name="date" value="${this.cardData.date || ''}">
+                <input type="date" id='date-last' class="form-control input-dantist"  placeholder="Дата останнього відвідування" name="date" value="${this.cardData.date}">
             </div>`
         } else if (doctor === "Терапевт") {
             this.fields.innerHTML = commonFields + `
         <div class="form-group mt-3">
             <label for="age" class="form-group-label mb-1">Вік</label>
-            <input type="number"  id='age' class="form-control" placeholder="Вік" name="age" value="${this.cardData.age || ''}">
+            <input type="number"  id='age' class="form-control input-therapist" placeholder="Вік" name="age" value="${this.cardData.age}">
         </div>`
         }
     }

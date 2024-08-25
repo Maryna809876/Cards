@@ -10,9 +10,41 @@ import { allDoctor } from './config/variable.js';
 import { VisitDentist, VisitCardiologist, VisitTherapist } from './сlass/classVisit.js'
 import { validationForm } from './function/validationForm.js'
 
-import {makeDraggable} from './function/funDragDrop.js';
+import { makeDraggable } from './function/funDragDrop.js';
 
 let TOKEN = ''; // токен користувача отримується після авторизації 
+window.addEventListener('DOMContentLoaded', () => {
+    const storedToken = localStorage.getItem('TOKEN');
+    if (storedToken) {
+        TOKEN = storedToken;
+
+        isAuthorization(TOKEN, ['.intro', '.btn_login'], ['.sect-card', '.btn_visit', '.btn_logout']);
+
+
+        const cardAll = getAllCard(TOKEN);
+        cardAll.then((data) => {
+            if (data.length) {
+                data.forEach((item) => {
+                    if (allDoctor[item.doctor] === 'Стоматолог') {
+                        const card = new VisitDentist(item)
+                        listCard.append(card.render())
+                    }
+                    if (allDoctor[item.doctor] === 'Кардіолог') {
+                        const card = new VisitCardiologist(item)
+                        listCard.append(card.render())
+                    }
+                    if (allDoctor[item.doctor] === 'Терапевт') {
+                        const card = new VisitTherapist(item)
+                        listCard.append(card.render())
+                    }
+                });
+            } else {
+                listCard.insertAdjacentHTML('afterend', `
+                <div class="fw-bold fs-1 text-center mt-5 not_card">No items have been added</div>`)
+            }
+        }).catch(err => console.log(err));
+    }
+});
 const btnLogin = document.querySelector('.btn_login') // кнопка яка запускатиме модалку для входу 
 const btnVisit = document.querySelector('.btn_visit') // кнопка яка запускатиме модалку для створення візиту 
 const btnLogout = document.querySelector('.btn_logout') // кнопка яка запускатиме модалку вихід із кабінету 
@@ -24,9 +56,7 @@ const cardFilter = document.querySelector('.card_filter') // форма для �
 
 btnLogin.addEventListener('click', () => {
     const formAuth = new ModalLogin() // клас модалка авторизація
-    // console.log(formAuth);
     const form = formAuth.renderAuth();
-    // console.log(form)
     document.querySelector('.main').after(form)
 
     // подія на контент модалки 
@@ -44,15 +74,13 @@ btnLogin.addEventListener('click', () => {
                 msgError.style.display = 'block'
             } else {
                 TOKEN = res;
-                // deleteCard(212167, TOKEN)
-
+                localStorage.setItem('TOKEN', TOKEN);
                 formAuth.closeModal()
                 isAuthorization(res, ['.intro', '.btn_login'], ['.sect-card', '.btn_visit', '.btn_logout',])
                 const cardAll = getAllCard(TOKEN)
                 cardAll.then((data) => {
                     if (data.length) {
                         data.forEach((item) => {
-                            console.log(item.id);
                             if (allDoctor[item.doctor] === 'Стоматолог') {
                                 const card = new VisitDentist(item)
                                 listCard.append(card.render())
@@ -70,14 +98,15 @@ btnLogin.addEventListener('click', () => {
                         listCard.insertAdjacentHTML('afterend', `
                         <div class="fw-bold fs-1 text-center mt-5 not_card">No items have been added</div>`)
                     }
-                })
+                }).catch(err => console.log(err))
             }
-        })
+        }).catch(err => console.log(err))
     })
 
 })
 // кнопка виходу із акаунта 
 btnLogout.addEventListener('click', () => {
+    localStorage.removeItem('TOKEN');
     TOKEN = ""
     isAuthorization(true, [".sect-card", ".btn_visit", ".btn_logout"], ['.intro', '.btn_login'])
     listCard.innerHTML = ''
@@ -85,6 +114,7 @@ btnLogout.addEventListener('click', () => {
 })
 
 //  кнопка створення візиту 
+
 btnVisit.addEventListener('click', () => {
     const modal = new ModalVisit()
     const formVisit = modal.renderVisit()
@@ -94,7 +124,6 @@ btnVisit.addEventListener('click', () => {
 
     form.addEventListener('submit', (e) => {
         e.preventDefault()
-
         if (validationForm(form)) {
             const data = {}; // обєкт який буде вказуватися в запит 
             const formObj = new FormData(form)
@@ -118,18 +147,14 @@ btnVisit.addEventListener('click', () => {
                     listCard.append(card.render())
                     modal.closeModal()
                 }
-
-                if (listCard.children.length) {
-                    console.log(listCard.children.length);
-                    document.querySelector('.not_card').remove()
-                }
-            })
+            }).catch(err => console.log(err))
+            if (listCard.children.length) {
+                document.querySelector('.not_card').remove()
+            }
         }
 
     })
 })
-
-
 listCard.addEventListener('click', (e) => {
     if (e.target.closest('.btn-edit')) {
         const id = e.target.closest('.item_card').dataset.id
@@ -142,44 +167,43 @@ listCard.addEventListener('click', (e) => {
 
             formEdit.addEventListener('submit', (e) => {
                 e.preventDefault()
-                const datainForm = {};
-                const formObj = new FormData(formEdit)
-                for (const [key, value] of formObj) {
-                    datainForm[key] = value
-                }
-                const cardupdate = editCard(id, TOKEN, datainForm)
-                cardupdate.then((data) => {
-                    if (allDoctor[data.doctor] === 'Стоматолог') {
-                        const card = new VisitDentist(data);
-                        item.innerHTML = card.render().innerHTML;
-                        cardEdit.closeModal();
+                if (validationForm(formEdit)) {
+                    const datainForm = {};
+                    const formObj = new FormData(formEdit)
+                    for (const [key, value] of formObj) {
+                        datainForm[key] = value
                     }
-                    if (allDoctor[data.doctor] === 'Кардіолог') {
-                        const card = new VisitCardiologist(data);
-                        item.innerHTML = card.render().innerHTML;
-                        cardEdit.closeModal();
-                    }
-                    if (allDoctor[data.doctor] === 'Терапевт') {
-                        const card = new VisitTherapist(data);
-                        item.innerHTML = card.render().innerHTML;
-                        cardEdit.closeModal();
+                    const cardupdate = editCard(id, TOKEN, datainForm)
+                    cardupdate.then((data) => {
+                        if (allDoctor[data.doctor] === 'Стоматолог') {
+                            const card = new VisitDentist(data);
+                            item.innerHTML = card.render().innerHTML;
+                            cardEdit.closeModal();
+                        }
+                        if (allDoctor[data.doctor] === 'Кардіолог') {
+                            const card = new VisitCardiologist(data);
+                            item.innerHTML = card.render().innerHTML;
+                            cardEdit.closeModal();
+                        }
+                        if (allDoctor[data.doctor] === 'Терапевт') {
+                            const card = new VisitTherapist(data);
+                            item.innerHTML = card.render().innerHTML;
+                            cardEdit.closeModal();
 
-                    }
-                })
+                        }
+                    }).catch(err => console.log(err))
+                }
             })
-        })
+        }).catch(err => console.log(err))
     }
 
     if (e.target.closest('.btn-remove')) {
-        console.log('remove');
         const cardElement = e.target.closest('.item_card')
         const id = cardElement.dataset.id;
-        console.log(id);
         const responce = deleteCard(id, TOKEN)
         if (responce) {
             e.target.closest('.item_card').remove()
         }
-        console.log();
         if (!listCard.children.length) {
             listCard.insertAdjacentHTML('afterend', `
                         <div class="fw-bold fs-1 text-center mt-5 not_card">No items have been added</div>`)
@@ -196,7 +220,6 @@ listCard.addEventListener('click', (e) => {
         showCard(item, TOKEN)
     }
 })
-
 cardFilter.addEventListener('input', (e) => {
     filterCard()
     if (e.target.classList.contains('form_search')) {
